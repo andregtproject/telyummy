@@ -11,6 +11,7 @@ class Canteen extends Model
         'name',
         'slug',
         'description',
+        'category',
         'rating',
         'is_open',
         'image',

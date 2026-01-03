@@ -13,7 +13,19 @@ class CanteenSeeder extends Seeder
      */
 public function run(): void
 {
+    // 1. Buat User Penjual dummy dulu sebagai pemilik kantin
+    $penjual = \App\Models\User::updateOrCreate(
+        ['email' => 'penjual@telyummy.com'],
+        [
+            'name' => 'Pak Kantin',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role' => 'penjual',
+        ]
+    );
+
+    // 2. Buat data Kantin dengan menghubungkan user_id milik penjual tadi
     Canteen::create([
+        'user_id' => $penjual->id,
         'name' => 'Kantin Teknik',
         'slug' => 'kantin-teknik',
         'image' => 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=800&auto=format&fit=crop', // Gambar placeholder
@@ -24,6 +36,7 @@ public function run(): void
     ]);
 
     Canteen::create([
+        'user_id' => $penjual->id,
         'name' => 'Kantin Asrama Putri',
         'slug' => 'kantin-asrama-putri',
         'image' => 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop',
@@ -34,6 +47,7 @@ public function run(): void
     ]);
 
     Canteen::create([
+        'user_id' => $penjual->id,
         'name' => 'Kantin Gedung TULT',
         'slug' => 'kantin-gedung-tult',
         'image' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop',

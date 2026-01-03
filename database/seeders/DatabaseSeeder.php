@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Panggil CanteenSeeder di sini!
-        // $this->call([
-        //     CanteenSeeder::class,
-        // ]);
+        $this->call([
+             CanteenSeeder::class,
+        ]);
     }
 }

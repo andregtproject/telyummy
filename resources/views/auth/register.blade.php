@@ -27,6 +27,17 @@
                 <p class="text-slate-500 mt-2 font-medium">Bergabung dengan ekosistem kantin Telyu</p>
             </div>
 
+            <!-- Menampilkan Error Validasi -->
+            @if ($errors->any())
+                <div class="mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
@@ -135,6 +146,8 @@
                 map = L.map('map').setView([lat, lng], 18);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+                
+                // PENTING: Set nilai input hidden saat peta pertama kali dimuat
                 updateInputs(lat, lng);
 
                 marker.on('dragend', function() {
