@@ -18,7 +18,7 @@ class Canteen extends Model
         'longitude',
     ];
 
-    // Relasi: Kantin dimiliki oleh satu User (Penjual)
+
     public function user()
     {
         return $this->belongsTo(User::class);
