@@ -17,9 +17,10 @@ class Canteen extends Model
         'image',
         'latitude',
         'longitude',
+        'location_description',
     ];
 
-    // Relasi: Kantin dimiliki oleh satu User (Penjual)
+    // Relasi Kantin dimiliki oleh satu User (Penjual)
     public function user()
     {
         return $this->belongsTo(User::class);
