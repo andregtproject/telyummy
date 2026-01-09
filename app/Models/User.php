@@ -32,4 +32,16 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+    // Relasi User (Penjual) memiliki satu Kantin
+    public function canteen()
+    {
+        return $this->hasOne(Canteen::class);
+    }
+
+    // Relasi User (Pembeli) memiliki banyak Orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

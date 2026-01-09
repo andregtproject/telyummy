@@ -31,3 +31,9 @@ auth.json
 
 /.ai
 CODEBASE_ANALYSIS_REPORT.md
+
+AGENTS.md
+.roo/
+
+CLAUDE.md
+PREREQUISITES_CHECKLIST.md

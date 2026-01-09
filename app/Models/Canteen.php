@@ -25,4 +25,10 @@ class Canteen extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relasi Kantin memiliki banyak Orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
