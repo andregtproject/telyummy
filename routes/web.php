@@ -21,7 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // JIKA PEMBELI: Logika tetap disini (atau bisa dipindah ke Controller lain, serterah)
             $canteens = Canteen::where('is_open', true)->latest()->take(6)->get();
             $categories = Canteen::select('category')->distinct()->pluck('category');
-            
+
             return view('dashboards.pembeli', [
                 'canteens' => $canteens,
                 'categories' => $categories
@@ -34,6 +34,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/canteen/edit', [CanteenController::class, 'showFormEdit'])->name('canteen.edit');
     Route::put('/canteen/update', [CanteenController::class, 'update'])->name('canteen.update');
     Route::delete('/canteen/destroy', [CanteenController::class, 'destroy'])->name('canteen.destroy');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
