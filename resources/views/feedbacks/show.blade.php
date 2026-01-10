@@ -20,7 +20,12 @@
                     <div class="flex items-start justify-between mb-6 pb-6 border-b border-gray-200">
                         <div class="flex items-center gap-4">
                             @if($feedback->canteen->image)
-                                <img src="{{ Storage::url($feedback->canteen->image) }}" 
+                                @php
+                                    $imageUrl = str_starts_with($feedback->canteen->image, 'http')
+                                        ? $feedback->canteen->image
+                                        : Storage::url($feedback->canteen->image);
+                                @endphp
+                                <img src="{{ $imageUrl }}"
                                      alt="{{ $feedback->canteen->name }}"
                                      class="w-16 h-16 rounded-lg object-cover">
                             @else

@@ -51,7 +51,12 @@
                                         {{-- Header: Canteen Info --}}
                                         <div class="flex items-center gap-3 mb-3">
                                             @if($feedback->canteen->image)
-                                                <img src="{{ Storage::url($feedback->canteen->image) }}" 
+                                                @php
+                                                    $imageUrl = str_starts_with($feedback->canteen->image, 'http')
+                                                        ? $feedback->canteen->image
+                                                        : Storage::url($feedback->canteen->image);
+                                                @endphp
+                                                <img src="{{ $imageUrl }}"
                                                      alt="{{ $feedback->canteen->name }}"
                                                      class="w-10 h-10 rounded-full object-cover">
                                             @else
