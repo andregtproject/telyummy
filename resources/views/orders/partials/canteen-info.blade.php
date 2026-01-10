@@ -9,7 +9,12 @@ use Illuminate\Support\Facades\Storage;
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                 @if($canteen->image)
-                    <img src="{{ Storage::url($canteen->image) }}"
+                    @php
+                        $canteenImageUrl = str_starts_with($canteen->image, 'http')
+                            ? $canteen->image
+                            : Storage::url($canteen->image);
+                    @endphp
+                    <img src="{{ $canteenImageUrl }}"
                          alt="{{ $canteen->name }}"
                          class="w-full h-full object-cover">
                 @else
