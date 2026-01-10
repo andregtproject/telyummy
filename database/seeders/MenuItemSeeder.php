@@ -50,8 +50,8 @@ class MenuItemSeeder extends Seeder
         ];
 
         foreach ($canteens as $canteen) {
-            // Setiap kantin dapat 5-10 menu random dari berbagai kategori
-            $menuCount = rand(5, 10);
+            // Setiap kantin dapat 10-18 menu random dari berbagai kategori
+            $menuCount = rand(10, 18);
             $addedMenus = [];
 
             for ($i = 0; $i < $menuCount; $i++) {
