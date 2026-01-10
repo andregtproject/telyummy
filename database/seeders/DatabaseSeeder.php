@@ -12,11 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Panggil CanteenSeeder di sini!
+        // Seed dalam urutan yang benar
         $this->call([
-            CanteenSeeder::class,
-            MenuItemSeeder::class,
-            OrderSeeder::class,
+            UserSeeder::class,      // 1. Buat user pembeli dan penjual
+            CanteenSeeder::class,   // 2. Buat kantin (penjual)
+            MenuItemSeeder::class,  // 3. Buat menu items per kantin
+            OrderSeeder::class,     // 4. Buat sample orders
         ]);
     }
 }
