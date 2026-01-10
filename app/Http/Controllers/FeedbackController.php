@@ -31,6 +31,14 @@ class FeedbackController extends Controller
         // Get canteens for dropdown
         $canteens = Canteen::where('is_open', true)->get();
         
+        // Get completed orders for current user (untuk referensi feedback)
+        $orders = Order::where('user_id', Auth::id())
+            ->where('status', 'selesai')
+            ->with('canteen')
+            ->latest()
+            ->take(20)
+            ->get();
+        
         // Pre-select canteen if provided
         $selectedCanteen = null;
         $selectedOrder = null;
@@ -48,7 +56,7 @@ class FeedbackController extends Controller
             }
         }
 
-        return view('feedbacks.create', compact('canteens', 'selectedCanteen', 'selectedOrder'));
+        return view('feedbacks.create', compact('canteens', 'orders', 'selectedCanteen', 'selectedOrder'));
     }
 
     /**
@@ -117,15 +125,16 @@ class FeedbackController extends Controller
 
         $feedbacks = $query->latest()->paginate(10);
         
-        // Count per status untuk tabs
-        $counts = [
-            'all' => Feedback::where('canteen_id', $user->canteen->id)->count(),
+        // Stats untuk tampilan
+        $stats = [
+            'total' => Feedback::where('canteen_id', $user->canteen->id)->count(),
             'menunggu' => Feedback::where('canteen_id', $user->canteen->id)->menunggu()->count(),
             'dibaca' => Feedback::where('canteen_id', $user->canteen->id)->dibaca()->count(),
             'ditanggapi' => Feedback::where('canteen_id', $user->canteen->id)->ditanggapi()->count(),
+            'average_rating' => Feedback::where('canteen_id', $user->canteen->id)->avg('rating'),
         ];
 
-        return view('feedbacks.seller-index', compact('feedbacks', 'counts'));
+        return view('feedbacks.seller-index', compact('feedbacks', 'stats'));
     }
 
     /**
