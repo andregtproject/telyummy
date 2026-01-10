@@ -43,8 +43,8 @@ class OrderSeeder extends Seeder
             'Minta sendok plastik ya',
         ];
 
-        // Buat 15-25 sample orders
-        $orderCount = rand(15, 25);
+        // Buat 40-60 sample orders untuk screenshot presentasi yang serius
+        $orderCount = rand(40, 60);
 
         for ($i = 0; $i < $orderCount; $i++) {
             // Random pembeli dan kantin
