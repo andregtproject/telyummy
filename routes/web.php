@@ -13,6 +13,11 @@ Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
+    // ==========================================
+    // NURIL: Canteen Resource Routes
+    // ==========================================
+    Route::resource('canteens', CanteenController::class);
+
     Route::get('/dashboard', function () {
         $user = Auth::user();
 
