@@ -44,4 +44,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Order::class);
     }
+
+    // Relasi User (Pembeli) memiliki banyak Feedback yang diberikan
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }
