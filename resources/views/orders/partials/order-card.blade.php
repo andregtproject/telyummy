@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Storage;
                 {{-- Canteen Avatar --}}
                 <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                     @if($order->canteen->image)
-                        <img src="{{ Storage::url($order->canteen->image) }}"
+                        @php
+                            $canteenImageUrl = str_starts_with($order->canteen->image, 'http')
+                                ? $order->canteen->image
+                                : Storage::url($order->canteen->image);
+                        @endphp
+                        <img src="{{ $canteenImageUrl }}"
                              alt="{{ $order->canteen->name }}"
                              class="w-full h-full object-cover">
                     @else
