@@ -31,7 +31,12 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 p-6">
                 <div class="flex items-center gap-4">
                     @if($canteen->image)
-                        <img src="{{ Storage::url($canteen->image) }}" alt="{{ $canteen->name }}"
+                        @php
+                            $canteenImageUrl = str_starts_with($canteen->image, 'http')
+                                ? $canteen->image
+                                : Storage::url($canteen->image);
+                        @endphp
+                        <img src="{{ $canteenImageUrl }}" alt="{{ $canteen->name }}"
                              class="w-16 h-16 rounded-lg object-cover">
                     @else
                         <div class="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center">

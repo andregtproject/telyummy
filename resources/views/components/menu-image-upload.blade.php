@@ -6,7 +6,16 @@
     'helpText' => 'PNG, JPG, JPEG maksimal 2MB'
 ])
 
-<div x-data="{ imagePreview: {{ $currentImage ? "'" . Storage::url($currentImage) . "'" : 'null' }} }">
+@php
+    $imageUrl = null;
+    if ($currentImage) {
+        $imageUrl = str_starts_with($currentImage, 'http')
+            ? $currentImage
+            : Storage::url($currentImage);
+    }
+@endphp
+
+<div x-data="{ imagePreview: {{ $imageUrl ? "'" . $imageUrl . "'" : 'null' }} }">
     <label class="block text-sm font-medium text-gray-700 mb-2">
         {{ $label }} @if($required)<span class="text-red-500">*</span>@endif
     </label>
