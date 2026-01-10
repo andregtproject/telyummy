@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CanteenController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -104,6 +105,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Update order status
         Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('update-status');
+    });
+
+    // ==========================================
+    // IKRAM: FEEDBACK ROUTES (Pembeli)
+    // ==========================================
+    Route::prefix('feedbacks')->name('feedbacks.')->group(function () {
+        // Pembeli: Daftar feedback yang sudah dikirim
+        Route::get('/', [FeedbackController::class, 'index'])->name('index');
+
+        // Pembeli: Form buat feedback baru
+        Route::get('/create', [FeedbackController::class, 'create'])->name('create');
+
+        // Pembeli: Simpan feedback baru
+        Route::post('/', [FeedbackController::class, 'store'])->name('store');
+
+        // Pembeli: Lihat detail feedback
+        Route::get('/{feedback}', [FeedbackController::class, 'show'])->name('show');
+    });
+
+    // ==========================================
+    // IKRAM: SELLER FEEDBACK MANAGEMENT ROUTES (Penjual)
+    // ==========================================
+    Route::prefix('seller/feedbacks')->name('seller.feedbacks.')->group(function () {
+        // Penjual: Daftar feedback masuk
+        Route::get('/', [FeedbackController::class, 'sellerIndex'])->name('index');
+
+        // Penjual: Lihat detail feedback
+        Route::get('/{feedback}', [FeedbackController::class, 'sellerShow'])->name('show');
+
+        // Penjual: Kirim tanggapan
+        Route::post('/{feedback}/respond', [FeedbackController::class, 'respond'])->name('respond');
+
+        // Penjual: Update status feedback (tandai dibaca)
+        Route::patch('/{feedback}/status', [FeedbackController::class, 'updateStatus'])->name('status');
     });
 });
 
