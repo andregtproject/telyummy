@@ -14,7 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         // Panggil CanteenSeeder di sini!
         $this->call([
-             CanteenSeeder::class,
+            CanteenSeeder::class,
+            MenuItemSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

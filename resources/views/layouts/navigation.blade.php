@@ -30,28 +30,56 @@
         @if(Auth::user()->role === 'penjual')
         <div class="mt-6 pt-6 border-t border-gray-100">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Manajemen Kantin</p>
-            
-            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group mb-1">
+
+            <a href="{{ route('menu-items.index') }}"
+               class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium transition-all group mb-1
+               {{ request()->routeIs('menu-items.*') ? 'bg-red-600 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 hover:bg-red-50 hover:text-red-600' }}">
                 <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span>Daftar Menu</span>
             </a>
-            
-            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group relative">
+
+            <a href="{{ route('seller.orders.incoming') }}"
+               class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium transition-all group relative mb-1
+               {{ request()->routeIs('seller.orders.incoming') || request()->routeIs('seller.orders.show') ? 'bg-red-600 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 hover:bg-red-50 hover:text-red-600' }}">
                 <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 <span>Pesanan Masuk</span>
-                <span class="absolute right-4 w-5 h-5 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-md shadow-red-500/40 animate-pulse">3</span>
+                @php
+                    $pendingOrdersCount = Auth::user()->canteen?->orders()->whereIn('status', ['menunggu', 'diproses'])->count() ?? 0;
+                @endphp
+                @if($pendingOrdersCount > 0)
+                <span class="absolute right-4 w-5 h-5 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-md shadow-red-500/40 animate-pulse">{{ $pendingOrdersCount > 9 ? '9+' : $pendingOrdersCount }}</span>
+                @endif
             </a>
 
-            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group">
+            <a href="{{ route('seller.orders.history') }}"
+               class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium transition-all group
+               {{ request()->routeIs('seller.orders.history') ? 'bg-red-600 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 hover:bg-red-50 hover:text-red-600' }}">
                 <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span>Laporan Penjualan</span>
+                <span>Riwayat Pesanan</span>
             </a>
         </div>
         @endif
 
-        {{-- TODO: Buat navigasi menu untuk pembeli disini --}}
+        @if(Auth::user()->role === 'pembeli')
+        <div class="mt-6 pt-6 border-t border-gray-100">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Pesanan</p>
+
+            <a href="{{ route('orders.index') }}"
+               class="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium transition-all group relative mb-1
+               {{ request()->routeIs('orders.*') ? 'bg-red-600 text-white shadow-lg shadow-red-500/30' : 'text-slate-500 hover:bg-red-50 hover:text-red-600' }}">
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span>Pesanan Saya</span>
+                @php
+                    $activeOrdersCount = Auth::user()->orders()->whereIn('status', ['menunggu', 'diproses'])->count();
+                @endphp
+                @if($activeOrdersCount > 0)
+                <span class="absolute right-4 w-5 h-5 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full shadow-md shadow-red-500/40 animate-pulse">{{ $activeOrdersCount > 9 ? '9+' : $activeOrdersCount }}</span>
+                @endif
+            </a>
+        </div>
+        @endif
         
     </nav>
 

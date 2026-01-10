@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\CanteenController;
+use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WelcomeController;
+use App\Models\Canteen;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CanteenController;
-use App\Models\Canteen;
-use App\Http\Controllers\WelcomeController;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
@@ -29,11 +31,75 @@ Route::middleware(['auth', 'verified'])->group(function () {
         }
     })->name('dashboard');
 
-    // Route khusus Kantin
+    // ==========================================
+    // CANTEEN ROUTES (Penjual)
+    // ==========================================
     Route::post('/canteen/toggle-open', [CanteenController::class, 'toggleOpen'])->name('canteen.toggle');
     Route::get('/canteen/edit', [CanteenController::class, 'showFormEdit'])->name('canteen.edit');
     Route::put('/canteen/update', [CanteenController::class, 'update'])->name('canteen.update');
     Route::delete('/canteen/destroy', [CanteenController::class, 'destroy'])->name('canteen.destroy');
+
+    // ==========================================
+    // MENU ITEMS ROUTES (Penjual only)
+    // ==========================================
+    Route::prefix('menu-items')->name('menu-items.')->group(function () {
+        Route::get('/', [MenuItemController::class, 'index'])->name('index');
+        Route::get('/create', [MenuItemController::class, 'create'])->name('create');
+        Route::post('/', [MenuItemController::class, 'store'])->name('store');
+        Route::get('/{menuItem}', [MenuItemController::class, 'show'])->name('show');
+        Route::get('/{menuItem}/edit', [MenuItemController::class, 'edit'])->name('edit');
+        Route::put('/{menuItem}', [MenuItemController::class, 'update'])->name('update');
+        Route::delete('/{menuItem}', [MenuItemController::class, 'destroy'])->name('destroy');
+        Route::post('/{menuItem}/toggle', [MenuItemController::class, 'toggleAvailability'])->name('toggle');
+    });
+
+    // ==========================================
+    // ORDER ROUTES (Pembeli)
+    // ==========================================
+    Route::prefix('orders')->name('orders.')->group(function () {
+        // Pembeli: Order history
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+
+        // Pembeli: Create order
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+
+        // Pembeli: View single order
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+
+        // Pembeli: Cancel order
+        Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+    });
+
+    // ==========================================
+    // CANTEEN MENU & CHECKOUT ROUTES (Pembeli)
+    // ==========================================
+    Route::prefix('canteen')->name('canteen.')->group(function () {
+        // View canteen menu for ordering
+        Route::get('/{canteen:slug}/menu', [OrderController::class, 'showMenu'])->name('menu');
+
+        // Checkout page
+        Route::get('/{canteen:slug}/checkout', [OrderController::class, 'checkout'])->name('checkout');
+
+        // API: Get menu items for cart (JSON)
+        Route::get('/{canteen}/menu-items', [OrderController::class, 'getMenuItems'])->name('menu-items');
+    });
+
+    // ==========================================
+    // SELLER ORDER MANAGEMENT ROUTES (Penjual)
+    // ==========================================
+    Route::prefix('seller/orders')->name('seller.orders.')->group(function () {
+        // Incoming orders (menunggu + diproses)
+        Route::get('/', [OrderController::class, 'incoming'])->name('incoming');
+
+        // Order history (selesai + batal)
+        Route::get('/history', [OrderController::class, 'history'])->name('history');
+
+        // View single order
+        Route::get('/{order}', [OrderController::class, 'showForSeller'])->name('show');
+
+        // Update order status
+        Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('update-status');
+    });
 });
 
 Route::middleware('auth')->group(function () {

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Canteen extends Model
 {
@@ -21,14 +23,26 @@ class Canteen extends Model
     ];
 
     // Relasi Kantin dimiliki oleh satu User (Penjual)
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
     // Relasi Kantin memiliki banyak Orders
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    // Relasi Kantin memiliki banyak Menu Items
+    public function menuItems(): HasMany
+    {
+        return $this->hasMany(MenuItem::class);
+    }
+
+    // Get available menu items only
+    public function availableMenuItems(): HasMany
+    {
+        return $this->menuItems()->where('is_available', true);
     }
 }

@@ -2,65 +2,113 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Order;
 use App\Models\Canteen;
+use App\Models\MenuItem;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // 1. Ambil Kantin Pertama (Milik Anda)
-        $canteen = Canteen::first();
+        // Ambil semua pembeli
+        $pembelis = User::where('role', 'pembeli')->get();
         
-        // 2. Ambil User Pembeli (Bisa pakai user yang sama atau user lain jika ada)
-        // Jika belum ada user lain, kita pakai user ID 1 atau buat user dummy baru
-        $user = User::first(); 
+        // Ambil semua kantin yang punya menu
+        $canteens = Canteen::has('menuItems')->get();
 
-        if (!$canteen || !$user) {
-            $this->command->info('Data Kantin atau User tidak ditemukan. Pastikan sudah register.');
+        if ($pembelis->isEmpty() || $canteens->isEmpty()) {
+            $this->command->warn('Tidak ada pembeli atau kantin dengan menu. Jalankan UserSeeder, CanteenSeeder, dan MenuItemSeeder terlebih dahulu.');
             return;
         }
 
-        // 3. Buat beberapa pesanan dummy
+        $statuses = [
+            Order::STATUS_MENUNGGU,
+            Order::STATUS_DIPROSES,
+            Order::STATUS_SELESAI,
+            Order::STATUS_BATAL,
+        ];
 
-        // Pesanan 1: Status MENUNGGU (Agar muncul di Antrian Pesanan)
-        Order::create([
-            'user_id' => $user->id,
-            'canteen_id' => $canteen->id,
-            'total_price' => 25000,
-            'status' => 'menunggu',
-            'created_at' => Carbon::now(), // Baru saja order
-        ]);
+        $notes = [
+            null,
+            'Tolong cepat ya, saya buru-buru',
+            'Nasi jangan terlalu banyak',
+            'Sambalnya pisah',
+            'Kalau bisa di pack rapi',
+            'Minta sendok plastik ya',
+        ];
 
-        // Pesanan 2: Status MENUNGGU (Lagi)
-        Order::create([
-            'user_id' => $user->id,
-            'canteen_id' => $canteen->id,
-            'total_price' => 18000,
-            'status' => 'menunggu',
-            'created_at' => Carbon::now()->subMinutes(5), // 5 menit lalu
-        ]);
+        // Buat 15-25 sample orders
+        $orderCount = rand(15, 25);
 
-        // Pesanan 3: Status SELESAI (Agar masuk ke Total Pendapatan & Grafik)
-        Order::create([
-            'user_id' => $user->id,
-            'canteen_id' => $canteen->id,
-            'total_price' => 50000,
-            'status' => 'selesai',
-            'created_at' => Carbon::yesterday(), // Kemarin
-        ]);
+        for ($i = 0; $i < $orderCount; $i++) {
+            // Random pembeli dan kantin
+            $pembeli = $pembelis->random();
+            $canteen = $canteens->random();
+            
+            // Ambil menu dari kantin tersebut
+            $menuItems = $canteen->menuItems()->where('is_available', true)->get();
+            
+            if ($menuItems->isEmpty()) {
+                continue;
+            }
 
-        // Pesanan 4: Status SELESAI
-        Order::create([
-            'user_id' => $user->id,
-            'canteen_id' => $canteen->id,
-            'total_price' => 125000,
-            'status' => 'selesai',
-            'created_at' => Carbon::today()->subHours(2), // Hari ini, 2 jam lalu
-        ]);
+            // Random 1-4 items per order
+            $itemCount = rand(1, min(4, $menuItems->count()));
+            // random() dengan parameter angka selalu mengembalikan Collection
+            $selectedItems = $menuItems->random($itemCount);
+
+            // Hitung total
+            $totalPrice = 0;
+            $orderItemsData = [];
+
+            foreach ($selectedItems as $menuItem) {
+                $quantity = rand(1, 3);
+                $price = $menuItem->price;
+                $totalPrice += $price * $quantity;
+
+                $orderItemsData[] = [
+                    'menu_item_id' => $menuItem->id,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'notes' => rand(0, 3) === 0 ? 'Tidak pedas' : null,
+                ];
+            }
+
+            // Buat order
+            $status = $statuses[array_rand($statuses)];
+            
+            // Untuk order selesai/batal, set waktu lebih lama
+            $createdAt = now();
+            if (in_array($status, [Order::STATUS_SELESAI, Order::STATUS_BATAL])) {
+                $createdAt = now()->subDays(rand(1, 7))->subHours(rand(0, 23));
+            } elseif ($status === Order::STATUS_DIPROSES) {
+                $createdAt = now()->subHours(rand(1, 5));
+            } elseif ($status === Order::STATUS_MENUNGGU) {
+                $createdAt = now()->subMinutes(rand(5, 60));
+            }
+
+            $order = Order::create([
+                'user_id' => $pembeli->id,
+                'canteen_id' => $canteen->id,
+                'total_price' => $totalPrice,
+                'status' => $status,
+                'notes' => $notes[array_rand($notes)],
+                'created_at' => $createdAt,
+                'updated_at' => $createdAt,
+            ]);
+
+            // Buat order items
+            foreach ($orderItemsData as $itemData) {
+                $order->orderItems()->create($itemData);
+            }
+        }
+
+        $this->command->info("Created {$orderCount} sample orders.");
     }
 }
