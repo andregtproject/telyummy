@@ -42,7 +42,7 @@
 
                     {{-- Menu Grid --}}
                     @if($menuItems->count() > 0)
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($menuItems as $item)
                                 @php
                                     $imageUrl = $item->image
@@ -51,72 +51,72 @@
                                 @endphp
                                 <div x-show="activeCategory === null || activeCategory === '{{ $item->category }}'"
                                      x-transition
-                                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                                    <div class="flex">
-                                        {{-- Image --}}
-                                        <div class="w-32 h-32 flex-shrink-0">
-                                            @if($item->image)
-                                                <img src="{{ $imageUrl }}"
-                                                     alt="{{ $item->name }}"
-                                                     class="w-full h-full object-cover"
-                                                     onerror="this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center\'><svg class=\'w-8 h-8 text-red-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
-                                            @else
-                                                <div class="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-                                                    <x-icons.image-placeholder class="w-8 h-8 text-red-400" />
-                                                </div>
+                                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg flex flex-col">
+                                    {{-- Image (Top) --}}
+                                    <div class="w-full h-40 relative">
+                                        @if($item->image)
+                                            <img src="{{ $imageUrl }}"
+                                                 alt="{{ $item->name }}"
+                                                 class="w-full h-full object-cover"
+                                                 onerror="this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center\'><svg class=\'w-12 h-12 text-red-400\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg></div>'">
+                                        @else
+                                            <div class="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                                                <x-icons.image-placeholder class="w-12 h-12 text-red-400" />
+                                            </div>
+                                        @endif
+                                        {{-- Category Badge (Overlay) --}}
+                                        @if($item->category)
+                                            <span class="absolute top-2 right-2 text-xs bg-white/90 backdrop-blur-sm text-gray-700 px-2 py-1 rounded-full shadow-sm font-medium">
+                                                {{ $item->category }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    {{-- Info (Bottom) --}}
+                                    <div class="p-4 flex flex-col flex-1">
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-gray-900 text-lg">{{ $item->name }}</h4>
+                                            @if($item->description)
+                                                <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ $item->description }}</p>
                                             @endif
                                         </div>
 
-                                        {{-- Info --}}
-                                        <div class="flex-1 p-4 flex flex-col justify-between">
-                                            <div>
-                                                <div class="flex items-start justify-between">
-                                                    <h4 class="font-semibold text-gray-900">{{ $item->name }}</h4>
-                                                    @if($item->category)
-                                                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                                                            {{ $item->category }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                @if($item->description)
-                                                    <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ $item->description }}</p>
-                                                @endif
-                                            </div>
-
-                                            <div class="flex items-center justify-between mt-2">
-                                                <span class="font-bold text-red-600">
+                                        <div class="mt-4 pt-3 border-t border-gray-100 space-y-3">
+                                            {{-- Price --}}
+                                            <div class="text-center">
+                                                <span class="font-bold text-red-600 text-xl">
                                                     Rp {{ number_format($item->price, 0, ',', '.') }}
                                                 </span>
-
-                                                {{-- Add to Cart Button --}}
-                                                <template x-if="!getItemQuantity({{ $item->id }})">
-                                                    <button @click="addItem({
-                                                        id: {{ $item->id }},
-                                                        name: '{{ addslashes($item->name) }}',
-                                                        price: {{ $item->price }},
-                                                        image: '{{ $imageUrl }}'
-                                                    })"
-                                                            class="inline-flex items-center px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
-                                                        <x-icons.plus class="w-4 h-4 mr-1" />
-                                                        Tambah
-                                                    </button>
-                                                </template>
-
-                                                {{-- Quantity Controls --}}
-                                                <template x-if="getItemQuantity({{ $item->id }})">
-                                                    <div class="flex items-center gap-2">
-                                                        <button @click="decrementItem({{ $item->id }})"
-                                                                class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition">
-                                                            <x-icons.minus class="w-4 h-4" />
-                                                        </button>
-                                                        <span class="w-8 text-center font-medium" x-text="getItemQuantity({{ $item->id }})"></span>
-                                                        <button @click="incrementItem({{ $item->id }})"
-                                                                class="w-8 h-8 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition">
-                                                            <x-icons.plus class="w-4 h-4" />
-                                                        </button>
-                                                    </div>
-                                                </template>
                                             </div>
+
+                                            {{-- Add to Cart Button --}}
+                                            <template x-if="!getItemQuantity({{ $item->id }})">
+                                                <button @click="addItem({
+                                                    id: {{ $item->id }},
+                                                    name: '{{ addslashes($item->name) }}',
+                                                    price: {{ $item->price }},
+                                                    image: '{{ $imageUrl }}'
+                                                })"
+                                                        class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
+                                                    <x-icons.plus class="w-4 h-4 mr-1" />
+                                                    Tambah ke Keranjang
+                                                </button>
+                                            </template>
+
+                                            {{-- Quantity Controls --}}
+                                            <template x-if="getItemQuantity({{ $item->id }})">
+                                                <div class="flex items-center justify-center gap-4">
+                                                    <button @click="decrementItem({{ $item->id }})"
+                                                            class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition">
+                                                        <x-icons.minus class="w-5 h-5" />
+                                                    </button>
+                                                    <span class="w-12 text-center font-bold text-lg" x-text="getItemQuantity({{ $item->id }})"></span>
+                                                    <button @click="incrementItem({{ $item->id }})"
+                                                            class="w-10 h-10 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition">
+                                                        <x-icons.plus class="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
