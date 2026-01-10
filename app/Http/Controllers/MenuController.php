@@ -12,15 +12,12 @@ class MenuController extends Controller
 {
     public function index()
     {
-        // Ambil data kantin milik user yang sedang login
         $canteen = Canteen::where('user_id', Auth::id())->first();
 
-        // Jika user belum punya kantin, lempar error 404 atau redirect
         if (!$canteen) {
             return redirect()->route('dashboard')->with('error', 'Anda belum mendaftarkan kantin.');
         }
 
-        // Ambil semua menu milik kantin tersebut, urutkan dari yang terbaru
         $menus = $canteen->menus()->latest()->get();
 
         return view('menus.index', compact('menus'));
@@ -51,7 +48,6 @@ class MenuController extends Controller
 
     public function update(Request $request, Menu $menu)
     {
-        // Pastikan yang edit adalah pemilik kantin
         if ($menu->canteen->user_id !== Auth::id()) {
             abort(403);
         }
@@ -60,7 +56,6 @@ class MenuController extends Controller
         'name'        => 'required|string|max:255',
         'price'       => 'required|numeric',
         'description' => 'required|string|max:255',
-        // Image nullable saat update (karena user mungkin tidak ganti foto)
         'image'       => 'nullable|image|max:2048',
     ]);
 
@@ -71,7 +66,6 @@ class MenuController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
             if ($menu->image) Storage::disk('public')->delete($menu->image);
             $data['image'] = $request->file('image')->store('menus', 'public');
         }
@@ -93,10 +87,8 @@ class MenuController extends Controller
         return back()->with('success', 'Menu dihapus.');
     }
 
-    // Ketersediaan Menu
     public function toggleAvailability(Menu $menu)
     {
-        // Pastikan menu milik kantin user yang login
         if ($menu->canteen->user_id !== \Illuminate\Support\Facades\Auth::id()) {
             abort(403);
         }

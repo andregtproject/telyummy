@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk Telyummy</title>
+    <title>Masuk Telyummy - Kantin Telyu</title>
+    <link rel="icon" href="{{ asset('images/telyummy_logo.webp') }}" type="image/webp">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -13,19 +14,19 @@
         .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
     </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4 antialiased selection:bg-red-500 selection:text-white">
     <div class="glass w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl shadow-red-500/10 border border-white/50">
         <div class="text-center mb-8">
             <a href="/"><img src="{{ asset('images/telyummy_logo.webp') }}" alt="Logo" class="w-16 h-16 mx-auto mb-4"></a>
             <h1 class="text-3xl font-extrabold text-slate-900">Selamat Datang</h1>
-            <p class="text-slate-500 mt-2 font-medium">Masuk untuk mulai memesan makanan</p>
+            <p class="text-slate-500 mt-2 font-medium">Masuk ke akun Anda untuk akses Telyummy</p>
         </div>
 
         <form method="POST" action="{{ route('login') }}" class="space-y-5">
             @csrf
             <div>
                 <label class="block text-sm font-bold text-slate-600 mb-2 ml-1">Email</label>
-                <input type="email" name="email" required autofocus class="w-full px-5 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all">
+                <input type="email" name="email" required autofocus class="w-full px-5 py-3.5 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all" placeholder="Masukkan alamat email Anda">
                 @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
@@ -36,7 +37,7 @@
                 </div>
                 <div class="relative">
                     <input :type="show ? 'text' : 'password'" name="password" required 
-                        class="w-full px-5 py-3.5 bg-white border @error('password') border-red-500 @else @enderror rounded-2xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all">
+                        class="w-full px-5 py-3.5 bg-white border @error('password') border-red-500 @else @enderror rounded-2xl focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all" placeholder="Masukkan kata sandi Anda">
                     
                     <button type="button" @click="show = !show" class="absolute right-4 top-3.5 text-slate-400 hover:text-red-600 transition">
                         <svg x-show="!show" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>

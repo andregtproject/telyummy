@@ -18,7 +18,7 @@
             background-position: 0 0, 10px 10px;
             opacity: 0.1;
         }
-        /* Menghilangkan outline default browser pada focus */
+
         input:focus { outline: none; }
     </style>
 </head>

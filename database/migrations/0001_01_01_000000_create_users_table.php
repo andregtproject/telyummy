@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['pembeli', 'penjual']);
-            $table->string('avatar')->nullable(); // Foto profil untuk semua
-            $table->string('identity_card')->nullable(); // Hanya untuk pembeli (KTM)
+            $table->string('avatar')->nullable(); 
+            $table->string('identity_card')->nullable(); 
             $table->rememberToken();
             $table->timestamps();
         });

@@ -12,7 +12,6 @@ return new class extends Migration
    public function up(): void
 {
     Schema::table('canteens', function (Blueprint $table) {
-        // Kita kasih default value agar data lama tidak error
         $table->string('category')->default('Aneka Makanan'); 
     });
 }

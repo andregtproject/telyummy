@@ -14,4 +14,4 @@ class Menu extends Model
     {
         return $this->belongsTo(Canteen::class);
     }
-} 
+}
