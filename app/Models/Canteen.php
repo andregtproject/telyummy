@@ -45,4 +45,10 @@ class Canteen extends Model
     {
         return $this->menuItems()->where('is_available', true);
     }
+
+    // Relasi Kantin memiliki banyak Feedbacks
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
 }
