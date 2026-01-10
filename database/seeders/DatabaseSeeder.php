@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CanteenSeeder::class,   // 2. Buat kantin (penjual)
             MenuItemSeeder::class,  // 3. Buat menu items per kantin
             OrderSeeder::class,     // 4. Buat sample orders
+            FeedbackSeeder::class,  // 5. Buat sample feedbacks
         ]);
     }
 }
