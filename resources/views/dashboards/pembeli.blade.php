@@ -85,7 +85,12 @@
                             {{-- Canteen Image --}}
                             <div class="relative aspect-video">
                                 @if($canteen->image)
-                                    <img src="{{ Storage::url($canteen->image) }}"
+                                    @php
+                                        $imageUrl = str_starts_with($canteen->image, 'http')
+                                            ? $canteen->image
+                                            : Storage::url($canteen->image);
+                                    @endphp
+                                    <img src="{{ $imageUrl }}"
                                          alt="{{ $canteen->name }}"
                                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
